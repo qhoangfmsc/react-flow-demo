@@ -6,171 +6,71 @@ import {
   addEdge,
   Controls,
   MiniMap,
-  Handle,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import Sidebar from "./components/Sidebar";
 import PropertiesPanel from "./components/PropertiesPanel";
+import EdgePropertiesPanel from "./components/EdgePropertiesPanel";
+import { DefaultNode, InputNode, OutputNode, CustomNode } from "./components/ChildNode";
 
 const initialNodes = [
   {
     id: "n1",
-    position: { x: 0, y: 0 },
-    data: { 
+    position: { x: 10, y: 10 },
+    data: {
       label: "Node 1",
-      width: 150,
-      height: 50,
       backgroundColor: '#3B82F6',
-      animated: false,
     },
     type: "input",
   },
-  { 
-    id: "n2", 
-    position: { x: 0, y: 100 }, 
-    data: { 
+  {
+    id: "n2",
+    position: { x: 200, y: -50 },
+    data: {
       label: "Node 2",
-      width: 150,
-      height: 50,
       backgroundColor: '#6B7280',
-      animated: false,
     },
     type: "default",
   },
   {
     id: "n3",
-    position: { x: 0, y: 200 },
-    data: { 
+    position: { x: 200, y: 50 },
+    data: {
       label: "Node 3",
-      width: 150,
-      height: 50,
       backgroundColor: '#EF4444',
-      animated: false,
     },
     type: "custom",
   },
 ];
 const initialEdges = [
-  { id: "n1-n2", source: "n1", target: "n2", label: "Edge 1", animated: true },
+  { 
+    id: "n1-n2", 
+    source: "n1", 
+    target: "n2", 
+    label: "Edge 1", 
+    animated: true,
+    style: { stroke: '#3B82F6', strokeWidth: 2 },
+    markerEnd: { 
+      type: 'arrowclosed', 
+      color: '#3B82F6',
+      width: 20,
+      height: 20
+    }
+  },
+  { 
+    id: "n1-n3", 
+    source: "n1", 
+    target: "n3",
+    style: { stroke: '#6B7280', strokeWidth: 2 },
+    markerEnd: { 
+      type: 'arrowclosed', 
+      color: '#6B7280',
+      width: 20,
+      height: 20
+    }
+  },
 ];
 
-// Default Node Component
-const DefaultNode = ({ data, selected }) => {
-  const isAnimated = data?.animated;
-  const backgroundColor = data?.backgroundColor || '#6B7280';
-  const width = data?.width || 150;
-  const height = data?.height || 50;
-  
-  return (
-    <div
-      className={`px-4 py-3 rounded-lg text-white transition-all ${
-        selected 
-          ? 'ring-2 ring-gray-300 shadow-lg' 
-          : 'hover:opacity-90'
-      } ${isAnimated ? 'animate-pulse' : ''}`}
-      style={{
-        width: width,
-        height: height,
-        backgroundColor: backgroundColor,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <div className="font-medium text-center leading-tight">{data.label}</div>
-      <Handle type="target" position="left" />
-      <Handle type="source" position="right" />
-    </div>
-  );
-};
-
-// Input Node Component
-const InputNode = ({ data, selected }) => {
-  const isAnimated = data?.animated;
-  const backgroundColor = data?.backgroundColor || '#3B82F6';
-  const width = data?.width || 150;
-  const height = data?.height || 50;
-  
-  return (
-    <div
-      className={`px-4 py-3 rounded-lg text-white transition-all ${
-        selected 
-          ? 'ring-2 ring-blue-300 shadow-lg' 
-          : 'hover:opacity-90'
-      } ${isAnimated ? 'animate-pulse' : ''}`}
-      style={{
-        width: width,
-        height: height,
-        backgroundColor: backgroundColor,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <div className="font-medium text-center leading-tight">{data.label}</div>
-      <Handle type="source" position="right" />
-    </div>
-  );
-};
-
-// Output Node Component
-const OutputNode = ({ data, selected }) => {
-  const isAnimated = data?.animated;
-  const backgroundColor = data?.backgroundColor || '#10B981';
-  const width = data?.width || 150;
-  const height = data?.height || 50;
-  
-  return (
-    <div
-      className={`px-4 py-3 rounded-lg text-white transition-all ${
-        selected 
-          ? 'ring-2 ring-green-300 shadow-lg' 
-          : 'hover:opacity-90'
-      } ${isAnimated ? 'animate-pulse' : ''}`}
-      style={{
-        width: width,
-        height: height,
-        backgroundColor: backgroundColor,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <div className="font-medium text-center leading-tight">{data.label}</div>
-      <Handle type="target" position="left" />
-    </div>
-  );
-};
-
-// Custom Node Component
-const CustomNode = ({ data, selected }) => {
-  const isAnimated = data?.animated;
-  const backgroundColor = data?.backgroundColor || '#EF4444';
-  const width = data?.width || 150;
-  const height = data?.height || 50;
-  
-  return (
-    <div
-      className={`px-4 py-3 rounded-lg text-white transition-all ${
-        selected 
-          ? 'ring-2 ring-red-300 shadow-lg' 
-          : 'hover:opacity-90'
-      } ${isAnimated ? 'animate-pulse' : ''}`}
-      style={{
-        width: width,
-        height: height,
-        backgroundColor: backgroundColor,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <div className="font-medium text-center leading-tight">{data.label}</div>
-      <Handle type="target" position="left" />
-      <Handle type="source" position="right" />
-    </div>
-  );
-};
 
 const nodeTypes = {
   default: DefaultNode,
@@ -183,7 +83,9 @@ export default function App() {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
   const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [selectedEdgeId, setSelectedEdgeId] = useState(null);
   const [showPropertiesPanel, setShowPropertiesPanel] = useState(false);
+  const [propertiesPanelType, setPropertiesPanelType] = useState('node'); // 'node' or 'edge'
 
   const onNodesChange = useCallback(
     (changes) =>
@@ -196,19 +98,43 @@ export default function App() {
     []
   );
   const onConnect = useCallback(
-    (params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
+    (params) => {
+      const newEdge = {
+        ...params,
+        id: `edge-${Date.now()}`,
+        style: { stroke: '#6B7280', strokeWidth: 2 },
+        markerEnd: { 
+          type: 'arrowclosed', 
+          color: '#6B7280',
+          width: 20,
+          height: 20
+        }
+      };
+      setEdges((edgesSnapshot) => addEdge(newEdge, edgesSnapshot));
+    },
     []
   );
 
   // Handle node selection
   const onNodeClick = useCallback((event, node) => {
     setSelectedNodeId(node.id);
+    setSelectedEdgeId(null);
+    setPropertiesPanelType('node');
+    setShowPropertiesPanel(true);
+  }, []);
+
+  // Handle edge selection
+  const onEdgeClick = useCallback((event, edge) => {
+    setSelectedEdgeId(edge.id);
+    setSelectedNodeId(null);
+    setPropertiesPanelType('edge');
     setShowPropertiesPanel(true);
   }, []);
 
   // Handle background click to deselect
   const onPaneClick = useCallback(() => {
     setSelectedNodeId(null);
+    setSelectedEdgeId(null);
     setShowPropertiesPanel(false);
   }, []);
 
@@ -220,10 +146,18 @@ export default function App() {
   // Delete selected node
   const handleDeleteNode = useCallback((nodeId) => {
     setNodes((nodesSnapshot) => nodesSnapshot.filter((node) => node.id !== nodeId));
-    setEdges((edgesSnapshot) => 
+    setEdges((edgesSnapshot) =>
       edgesSnapshot.filter((edge) => edge.source !== nodeId && edge.target !== nodeId)
     );
     setSelectedNodeId(null);
+    setSelectedEdgeId(null);
+    setShowPropertiesPanel(false);
+  }, []);
+
+  // Delete selected edge
+  const handleDeleteEdge = useCallback((edgeId) => {
+    setEdges((edgesSnapshot) => edgesSnapshot.filter((edge) => edge.id !== edgeId));
+    setSelectedEdgeId(null);
     setShowPropertiesPanel(false);
   }, []);
 
@@ -236,34 +170,53 @@ export default function App() {
     );
   }, []);
 
+  // Update edge properties
+  const handleUpdateEdge = useCallback((updatedEdge) => {
+    setEdges((edgesSnapshot) =>
+      edgesSnapshot.map((edge) =>
+        edge.id === updatedEdge.id ? updatedEdge : edge
+      )
+    );
+  }, []);
+
   // Update nodes with selected state
   const nodesWithSelection = nodes.map((node) => ({
     ...node,
     selected: node.id === selectedNodeId,
   }));
 
-  // Get selected node for properties panel
+  // Update edges with selected state
+  const edgesWithSelection = edges.map((edge) => ({
+    ...edge,
+    selected: edge.id === selectedEdgeId,
+  }));
+
+  // Get selected node and edge for properties panel
   const selectedNode = nodes.find((node) => node.id === selectedNodeId);
+  const selectedEdge = edges.find((edge) => edge.id === selectedEdgeId);
 
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <Sidebar 
+      <Sidebar
         onAddNode={handleAddNode}
         onDeleteNode={handleDeleteNode}
+        onDeleteEdge={handleDeleteEdge}
         selectedNodeId={selectedNodeId}
+        selectedEdgeId={selectedEdgeId}
       />
-      
+
       {/* React Flow */}
       <div className="flex-1">
         <ReactFlow
           nodes={nodesWithSelection}
-          edges={edges}
+          edges={edgesWithSelection}
           nodeTypes={nodeTypes}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onNodeClick={onNodeClick}
+          onEdgeClick={onEdgeClick}
           onPaneClick={onPaneClick}
           fitView
         >
@@ -274,11 +227,22 @@ export default function App() {
 
       {/* Properties Panel */}
       {showPropertiesPanel && (
-        <PropertiesPanel
-          selectedNode={selectedNode}
-          onUpdateNode={handleUpdateNode}
-          onClose={() => setShowPropertiesPanel(false)}
-        />
+        <>
+          {propertiesPanelType === 'node' && (
+            <PropertiesPanel
+              selectedNode={selectedNode}
+              onUpdateNode={handleUpdateNode}
+              onClose={() => setShowPropertiesPanel(false)}
+            />
+          )}
+          {propertiesPanelType === 'edge' && (
+            <EdgePropertiesPanel
+              selectedEdge={selectedEdge}
+              onUpdateEdge={handleUpdateEdge}
+              onClose={() => setShowPropertiesPanel(false)}
+            />
+          )}
+        </>
       )}
     </div>
   );

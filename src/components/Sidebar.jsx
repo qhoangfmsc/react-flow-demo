@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Plus, Trash2, Square, Circle, Triangle } from 'lucide-react';
 
-const Sidebar = ({ onAddNode, onDeleteNode, selectedNodeId }) => {
+const Sidebar = ({ onAddNode, onDeleteNode, onDeleteEdge, selectedNodeId, selectedEdgeId }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const nodeTypes = [
@@ -32,26 +32,16 @@ const Sidebar = ({ onAddNode, onDeleteNode, selectedNodeId }) => {
   ];
 
   const handleAddNode = (nodeType) => {
-    const defaultColors = {
-      input: '#3B82F6',
-      default: '#6B7280',
-      output: '#10B981',
-      custom: '#EF4444',
-    };
-
     const newNode = {
       id: `node-${Date.now()}`,
       type: nodeType,
       position: {
-        x: Math.random() * 400 + 100,
-        y: Math.random() * 300 + 100,
+        x: 0,
+        y: 0,
       },
       data: {
         label: `${nodeType.charAt(0).toUpperCase() + nodeType.slice(1)} Node`,
-        width: 150,
-        height: 50,
-        backgroundColor: defaultColors[nodeType] || '#6B7280',
-        animated: false,
+        backgroundColor: '#000000',
       },
     };
     onAddNode(newNode);
@@ -60,6 +50,12 @@ const Sidebar = ({ onAddNode, onDeleteNode, selectedNodeId }) => {
   const handleDeleteNode = () => {
     if (selectedNodeId) {
       onDeleteNode(selectedNodeId);
+    }
+  };
+
+  const handleDeleteEdge = () => {
+    if (selectedEdgeId) {
+      onDeleteEdge(selectedEdgeId);
     }
   };
 
@@ -110,27 +106,50 @@ const Sidebar = ({ onAddNode, onDeleteNode, selectedNodeId }) => {
             </div>
           </div>
 
-          {/* Delete Node Section */}
+          {/* Delete Section */}
           <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-3">Delete Node</h3>
-            <button
-              onClick={handleDeleteNode}
-              disabled={!selectedNodeId}
-              className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-all ${
-                selectedNodeId
-                  ? 'border-red-200 hover:border-red-300 hover:bg-red-50 text-red-700 hover:text-red-800'
-                  : 'border-gray-200 text-gray-400 cursor-not-allowed'
-              }`}
-            >
-              <div className={`p-2 rounded-md ${
-                selectedNodeId ? 'bg-red-500' : 'bg-gray-300'
-              } text-white`}>
-                <Trash2 className="w-4 h-4" />
-              </div>
-              <span className="text-sm font-medium">
-                {selectedNodeId ? 'Delete Selected' : 'No Node Selected'}
-              </span>
-            </button>
+            <h3 className="text-sm font-medium text-gray-700 mb-3">Delete</h3>
+            <div className="space-y-2">
+              <button
+                onClick={handleDeleteNode}
+                disabled={!selectedNodeId}
+                className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-all ${
+                  selectedNodeId
+                    ? 'border-red-200 hover:border-red-300 hover:bg-red-50 text-red-700 hover:text-red-800'
+                    : 'border-gray-200 text-gray-400 cursor-not-allowed'
+                }`}
+              >
+                <div className={`p-2 rounded-md ${
+                  selectedNodeId ? 'bg-red-500' : 'bg-gray-300'
+                } text-white`}>
+                  <Square className="w-4 h-4" />
+                </div>
+                <span className="text-sm font-medium">
+                  {selectedNodeId ? 'Delete Node' : 'No Node Selected'}
+                </span>
+              </button>
+              
+              <button
+                onClick={handleDeleteEdge}
+                disabled={!selectedEdgeId}
+                className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-all ${
+                  selectedEdgeId
+                    ? 'border-red-200 hover:border-red-300 hover:bg-red-50 text-red-700 hover:text-red-800'
+                    : 'border-gray-200 text-gray-400 cursor-not-allowed'
+                }`}
+              >
+                <div className={`p-2 rounded-md ${
+                  selectedEdgeId ? 'bg-red-500' : 'bg-gray-300'
+                } text-white`}>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium">
+                  {selectedEdgeId ? 'Delete Edge' : 'No Edge Selected'}
+                </span>
+              </button>
+            </div>
           </div>
 
           {/* Instructions */}
@@ -138,8 +157,9 @@ const Sidebar = ({ onAddNode, onDeleteNode, selectedNodeId }) => {
             <h4 className="text-xs font-medium text-blue-800 mb-1">Instructions</h4>
             <ul className="text-xs text-blue-700 space-y-1">
               <li>• Click "Add Nodes" to create new nodes</li>
-              <li>• Click on a node to select it</li>
-              <li>• Use "Delete Selected" to remove nodes</li>
+              <li>• Click on a node to select and edit it</li>
+              <li>• Click on an edge to select and edit it</li>
+              <li>• Use "Delete" buttons to remove selected items</li>
             </ul>
           </div>
         </div>
@@ -165,7 +185,21 @@ const Sidebar = ({ onAddNode, onDeleteNode, selectedNodeId }) => {
             }`}
             title="Delete Selected Node"
           >
-            <Trash2 className="w-5 h-5" />
+            <Square className="w-5 h-5" />
+          </button>
+          <button
+            onClick={handleDeleteEdge}
+            disabled={!selectedEdgeId}
+            className={`w-full p-2 rounded-md transition-colors ${
+              selectedEdgeId
+                ? 'hover:bg-red-100 text-red-600'
+                : 'text-gray-400 cursor-not-allowed'
+            }`}
+            title="Delete Selected Edge"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
           </button>
         </div>
       )}

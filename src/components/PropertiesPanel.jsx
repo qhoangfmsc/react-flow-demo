@@ -1,16 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Settings, Move, Type, Square, Play, Pause } from 'lucide-react';
+import { Settings, Move, Type, Square } from 'lucide-react';
 
 const PropertiesPanel = ({ selectedNode, onUpdateNode, onClose }) => {
   const [properties, setProperties] = useState({
     label: '',
     type: 'default',
-    width: 150,
-    height: 50,
     x: 0,
     y: 0,
-    animated: false,
-    backgroundColor: '#6B7280', // Default gray color
+    backgroundColor: '#000000',
   });
 
   // Update properties when selectedNode changes
@@ -19,11 +16,8 @@ const PropertiesPanel = ({ selectedNode, onUpdateNode, onClose }) => {
       setProperties({
         label: selectedNode.data?.label || '',
         type: selectedNode.type || 'default',
-        width: selectedNode.data?.width || 150,
-        height: selectedNode.data?.height || 50,
         x: selectedNode.position?.x || 0,
         y: selectedNode.position?.y || 0,
-        animated: selectedNode.data?.animated || false,
         backgroundColor: selectedNode.data?.backgroundColor || '#6B7280',
       });
     }
@@ -43,9 +37,6 @@ const PropertiesPanel = ({ selectedNode, onUpdateNode, onClose }) => {
         data: {
           ...selectedNode.data,
           label: properties.label,
-          animated: properties.animated,
-          width: properties.width,
-          height: properties.height,
           backgroundColor: properties.backgroundColor,
         },
       };
@@ -58,11 +49,8 @@ const PropertiesPanel = ({ selectedNode, onUpdateNode, onClose }) => {
       setProperties({
         label: selectedNode.data?.label || '',
         type: selectedNode.type || 'default',
-        width: selectedNode.data?.width || 150,
-        height: selectedNode.data?.height || 50,
         x: selectedNode.position?.x || 0,
         y: selectedNode.position?.y || 0,
-        animated: selectedNode.data?.animated || false,
         backgroundColor: selectedNode.data?.backgroundColor || '#6B7280',
       });
     }
@@ -163,38 +151,6 @@ const PropertiesPanel = ({ selectedNode, onUpdateNode, onClose }) => {
           </div>
         </div>
 
-        {/* Size */}
-        <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
-            <Square className="w-4 h-4" />
-            Size
-          </label>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">Width</label>
-              <input
-                type="number"
-                value={properties.width}
-                onChange={(e) => handlePropertyChange('width', parseInt(e.target.value) || 150)}
-                min="50"
-                max="500"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">Height</label>
-              <input
-                type="number"
-                value={properties.height}
-                onChange={(e) => handlePropertyChange('height', parseInt(e.target.value) || 50)}
-                min="30"
-                max="300"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-          </div>
-        </div>
-
         {/* Background Color */}
         <div>
           <label className="text-sm font-medium text-gray-700 mb-2">Background Color</label>
@@ -212,43 +168,6 @@ const PropertiesPanel = ({ selectedNode, onUpdateNode, onClose }) => {
               className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
               placeholder="#6B7280"
             />
-          </div>
-        </div>
-
-        {/* Animated */}
-        <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
-            {properties.animated ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
-            Animation
-          </label>
-          <div className="flex items-center gap-3">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={properties.animated}
-                onChange={(e) => handlePropertyChange('animated', e.target.checked)}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
-              <span className="text-sm text-gray-700">Enable animation</span>
-            </label>
-          </div>
-        </div>
-
-        {/* Preview */}
-        <div>
-          <label className="text-sm font-medium text-gray-700 mb-2">Preview</label>
-          <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
-            <div
-              className="mx-auto text-white text-center rounded px-3 py-2 text-sm"
-              style={{
-                width: Math.min(properties.width, 200),
-                height: Math.min(properties.height, 100),
-                backgroundColor: properties.backgroundColor,
-                lineHeight: `${Math.min(properties.height, 100)}px`,
-              }}
-            >
-              {properties.label || 'Preview'}
-            </div>
           </div>
         </div>
       </div>
